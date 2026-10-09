@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="image.png" alt="SAPI Telegram AI Chatbot" width="100%">
+</p>
+
 # SAPI — Chatbot AI Telegram berbasis 9Router
 
 SAPI adalah chatbot AI yang dapat digunakan melalui Telegram. Repository ini bukan hanya dokumentasi: `bot.py` adalah implementasi chatbot yang dapat langsung dijalankan. Proyek ini menggunakan **9Router** sebagai gateway AI lokal dan menyediakan Hermes Agent sebagai jalur alternatif.
