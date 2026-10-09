@@ -8,9 +8,10 @@ import urllib.parse
 import urllib.request
 
 
-API_URL = "https://openrouter.ai/api/v1/chat/completions"
+ROUTER9_BASE_URL = os.getenv("ROUTER9_BASE_URL", "http://localhost:20128/v1").rstrip("/")
+API_URL = f"{ROUTER9_BASE_URL}/chat/completions"
 TELEGRAM_URL = "https://api.telegram.org/bot{}/{}"
-MODEL = os.getenv("OPENROUTER_MODEL", "openai/gpt-4o-mini")
+MODEL = os.getenv("ROUTER9_MODEL", "auto")
 SYSTEM_PROMPT = os.getenv(
     "SYSTEM_PROMPT", "Kamu adalah SAPI, asisten AI yang membantu dan menjawab dalam bahasa Indonesia."
 )
@@ -24,11 +25,11 @@ def request_json(url, payload, headers=None, timeout=60):
 
 
 def ask_model(user_text):
-    key = os.environ["OPENROUTER_API_KEY"]
+    key = os.environ.get("ROUTER9_API_KEY", "")
     result = request_json(
         API_URL,
         {"model": MODEL, "messages": [{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": user_text}]},
-        {"Content-Type": "application/json", "Authorization": f"Bearer {key}", "HTTP-Referer": "https://github.com/achmadnabillaabas/Chat-Bot-AI-Asistant", "X-Title": "SAPI Telegram Chatbot"},
+        {"Content-Type": "application/json", "Authorization": f"Bearer {key}"},
     )
     return result["choices"][0]["message"]["content"]
 
@@ -39,8 +40,8 @@ def telegram(token, method, payload=None):
 
 def main():
     token = os.environ.get("TELEGRAM_BOT_TOKEN")
-    if not token or not os.environ.get("OPENROUTER_API_KEY"):
-        print("Set TELEGRAM_BOT_TOKEN and OPENROUTER_API_KEY first.", file=sys.stderr)
+    if not token or not os.environ.get("ROUTER9_API_KEY"):
+        print("Set TELEGRAM_BOT_TOKEN and ROUTER9_API_KEY first.", file=sys.stderr)
         return 2
     offset = 0
     print(f"SAPI berjalan dengan model {MODEL}")

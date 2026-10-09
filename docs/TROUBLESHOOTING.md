@@ -1,29 +1,36 @@
 # Troubleshooting
 
-## `hermes: command not found`
+## `9router: command not found`
 
-Terminal belum memuat PATH atau Hermes dipasang di WSL. Tutup-buka terminal, cek instalasi, dan jalankan dari WSL2 jika menggunakan Windows.
+Pastikan Node.js/npm terpasang dan instalasi global berhasil:
 
-## `hermes setup` gagal
+```bash
+npm install -g 9router
+9router
+```
 
-Jalankan `hermes doctor`, periksa koneksi internet, lalu pastikan versi Hermes terbaru. Jangan membagikan API key pada laporan error.
+## Endpoint 9Router tidak bisa diakses
 
-## OpenRouter mengembalikan 401/403
+Pastikan proses `9router` masih berjalan, lalu uji:
 
-API key salah, dicabut, atau tidak memiliki izin. Buat key baru dan masukkan melalui `hermes setup`.
+```bash
+curl http://localhost:20128/v1/models
+```
 
-## OpenRouter mengembalikan 402
+Periksa juga `ROUTER9_BASE_URL` dan port pada dashboard.
 
-Saldo atau limit akun tidak mencukupi. Periksa billing OpenRouter atau pilih model gratis yang tersedia.
+## Error 401/403
+
+Periksa `ROUTER9_API_KEY`. Jika instalasi lokal tidak membutuhkan key, gunakan nilai yang disediakan konfigurasi 9Router. Jangan mengirim key dalam issue publik.
 
 ## Model tidak ditemukan
 
-Gunakan ID model yang masih tampil di OpenRouter. Model dapat berubah atau tidak tersedia pada provider tertentu.
+Gunakan `ROUTER9_MODEL=auto` atau model ID yang tampil pada dashboard 9Router.
 
 ## Telegram tidak membalas
 
-Periksa token BotFather, pastikan gateway sedang berjalan, pastikan channel Telegram aktif, dan jalankan `hermes doctor`. Cabut token jika pernah bocor.
+Periksa token BotFather, pastikan `bot.py` berjalan, pastikan 9Router berjalan, dan pastikan tidak ada proses bot lain memakai token yang sama.
 
 ## Masih gagal
 
-Kumpulkan versi (`hermes --help`), sistem operasi, perintah yang dijalankan, dan pesan error tanpa secret. Lihat issue repository atau dokumentasi resmi Hermes.
+Kumpulkan versi (`node --version`, `python --version`), perintah, endpoint tanpa credential, dan pesan error tanpa secret.

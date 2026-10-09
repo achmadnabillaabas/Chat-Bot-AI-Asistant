@@ -1,41 +1,45 @@
-# Konfigurasi OpenRouter
+# Konfigurasi 9Router
 
-## Apa itu OpenRouter?
+9Router adalah gateway lokal OpenAI-compatible. 9Router meneruskan request ke provider AI yang dikonfigurasi dan menyediakan endpoint default:
 
-OpenRouter adalah router API yang menyediakan akses ke banyak model melalui endpoint yang kompatibel dengan OpenAI. Satu API key dapat digunakan untuk memilih model yang berbeda, sesuai saldo, limit, dan ketersediaan.
-
-## Membuat API key
-
-1. Buka <https://openrouter.ai/> dan buat akun.
-2. Buka menu **Keys**.
-3. Pilih **Create Key**.
-4. Salin key satu kali dan simpan di password manager.
-5. Tambahkan kredit atau pilih model gratis jika tersedia.
-
-Jangan masukkan key ke Git, README, screenshot, atau chat publik.
-
-## Menghubungkan ke Hermes
-
-Jalankan:
-
-```bash
-hermes setup
+```text
+http://localhost:20128/v1
 ```
 
-Pilih **OpenRouter** bila tersedia, masukkan API key ketika diminta, lalu pilih model. Jika wizard versi Anda berbeda, lihat:
+## Instalasi dan menjalankan 9Router
 
 ```bash
-hermes model --help
-hermes config --help
+npm install -g 9router
+9router
 ```
 
-Model ditentukan oleh Hermes/provider. Contoh model OpenRouter harus mengikuti ID yang tampil di dashboard OpenRouter, bukan nama pendek buatan sendiri.
+Dashboard tersedia di `http://localhost:20128/dashboard`. Ikuti dashboard untuk mengatur provider, OAuth/API key, fallback, dan model.
 
-## Pengujian provider
+## Pengaturan project
+
+Salin `.env.example`, lalu set environment variable:
 
 ```bash
-hermes doctor
-hermes chat -q "Tulis satu kalimat untuk menguji koneksi OpenRouter."
+export ROUTER9_BASE_URL="http://localhost:20128/v1"
+export ROUTER9_API_KEY="your-local-9router-key"
+export ROUTER9_MODEL="auto"
 ```
 
-Jika gagal, periksa saldo, nama model, API key, dan endpoint provider. API key yang pernah tampil di log harus segera dicabut.
+9Router dapat memakai konfigurasi lokal tanpa API key. Jika instalasi Anda tidak meminta key, tetap isi `ROUTER9_API_KEY` dengan nilai yang diminta dokumentasi/ dashboard 9Router.
+
+## Pengujian endpoint
+
+```bash
+curl http://localhost:20128/v1/models
+```
+
+Jika endpoint membutuhkan key:
+
+```bash
+curl http://localhost:20128/v1/models \
+  -H "Authorization: Bearer $ROUTER9_API_KEY"
+```
+
+## Catatan
+
+Model `auto` menyerahkan pemilihan/fallback kepada 9Router. Gunakan model ID yang tampil pada dashboard jika ingin memilih model tertentu. Dokumentasi resmi: <https://9router.com/> dan <https://github.com/decolua/9router>.

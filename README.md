@@ -1,13 +1,13 @@
-# SAPI — Chatbot AI Telegram berbasis Hermes Agent
+# SAPI — Chatbot AI Telegram berbasis 9Router
 
-SAPI adalah chatbot AI yang dapat digunakan melalui Telegram. Repository ini bukan hanya dokumentasi: `bot.py` adalah implementasi chatbot yang dapat langsung dijalankan. Proyek ini juga mendokumentasikan jalur alternatif menggunakan **Hermes Agent** dan menghubungkan **OpenRouter** sebagai provider model AI.
+SAPI adalah chatbot AI yang dapat digunakan melalui Telegram. Repository ini bukan hanya dokumentasi: `bot.py` adalah implementasi chatbot yang dapat langsung dijalankan. Proyek ini menggunakan **9Router** sebagai gateway AI lokal dan menyediakan Hermes Agent sebagai jalur alternatif.
 
-> OpenRouter adalah nama layanan yang digunakan. Jika yang dimaksud “9router” adalah layanan lain, gunakan panduan provider tersebut; alur integrasinya tetap sama.
+> 9Router dijalankan sebagai gateway lokal yang kompatibel dengan OpenAI API.
 
 ## Tujuan
 
-- Membuat chatbot AI yang bisa dicoba pengguna lain tanpa menebak langkah instalasi.
-- Menjelaskan requirement, instalasi OpenRouter, instalasi Hermes Agent, konfigurasi model, dan koneksi Telegram.
+- Membuat chatbot AI yang bisa dicoba pengguna lain.
+- Menjelaskan requirement, instalasi 9Router, konfigurasi model, dan koneksi Telegram.
 - Menyediakan troubleshooting untuk masalah umum.
 
 ## Alur sistem
@@ -17,87 +17,74 @@ Pengguna Telegram
       ↓
 Telegram Bot API
       ↓
-Hermes Agent Gateway
+bot.py
       ↓
-OpenRouter API
+9Router lokal (localhost:20128/v1)
       ↓
-Model AI yang dipilih
+Provider/model AI yang dipilih di 9Router
 ```
+
+Hermes Agent bukan dependency wajib untuk `bot.py`. Pilih salah satu jalur agar token Telegram tidak dipakai dua proses.
 
 ## Requirement
 
 - Windows 10/11, macOS, Linux, atau WSL2.
-- Python 3.11+ dan `pip`.
-- Git.
-- Koneksi internet.
-- Akun [OpenRouter](https://openrouter.ai/) dan API key.
+- Node.js/npm untuk 9Router.
+- Python 3.11+.
+- Git dan koneksi internet.
+- Provider AI atau subscription yang dikonfigurasi di 9Router.
 - Akun Telegram dan bot token dari [@BotFather](https://t.me/BotFather).
-- Hermes Agent versi terbaru.
-
-Periksa instalasi:
-
-```bash
-python --version
-pip --version
-git --version
-```
 
 ## Instalasi cepat
 
 ```bash
 git clone https://github.com/achmadnabillaabas/Chat-Bot-AI-Asistant.git
 cd Chat-Bot-AI-Asistant
+npm install -g 9router
+9router
 ```
 
-Panduan lengkap:
+Buka dashboard 9Router di `http://localhost:20128/dashboard`, konfigurasi provider/model, lalu ikuti:
 
-1. [Requirement dan persiapan](docs/REQUIREMENTS.md)
-2. [Instalasi Hermes Agent](docs/INSTALLATION.md)
-3. [Konfigurasi OpenRouter](docs/PROVIDER_SETUP.md)
-4. [Konfigurasi Hermes](docs/HERMES_SETUP.md)
-5. [Membuat dan menghubungkan Telegram Bot](docs/TELEGRAM_SETUP.md)
-6. [Menjalankan dan menguji chatbot](docs/USAGE.md)
+1. [Requirement](docs/REQUIREMENTS.md)
+2. [Instalasi](docs/INSTALLATION.md)
+3. [Konfigurasi 9Router](docs/PROVIDER_SETUP.md)
+4. [Konfigurasi Hermes opsional](docs/HERMES_SETUP.md)
+5. [Telegram Bot](docs/TELEGRAM_SETUP.md)
+6. [Menjalankan chatbot](docs/USAGE.md)
 7. [Troubleshooting](docs/TROUBLESHOOTING.md)
 
-## Ringkasan konfigurasi
+## Jalankan chatbot
 
-1. Buat API key di OpenRouter.
-2. Buat bot melalui BotFather dan simpan tokennya.
-3. Instal Hermes Agent.
-4. Jalankan `hermes setup`, pilih provider OpenRouter, model, dan masukkan API key melalui prompt.
-5. Aktifkan Telegram pada konfigurasi Hermes sesuai dokumentasi versi yang terpasang.
-6. Jalankan gateway Hermes.
-7. Buka bot di Telegram dan kirim `/start`.
+Linux/macOS/WSL2:
 
-Jangan menaruh API key atau token Telegram di repository. Gunakan `.env.example` hanya sebagai referensi; file `.env` tetap lokal.
-
-## Struktur dokumentasi
-
-```text
-docs/
-├── REQUIREMENTS.md
-├── INSTALLATION.md
-├── PROVIDER_SETUP.md
-├── HERMES_SETUP.md
-├── TELEGRAM_SETUP.md
-├── USAGE.md
-└── TROUBLESHOOTING.md
+```bash
+export ROUTER9_BASE_URL="http://localhost:20128/v1"
+export ROUTER9_API_KEY="your-local-9router-key"
+export ROUTER9_MODEL="auto"
+export TELEGRAM_BOT_TOKEN="123456:..."
+python3 bot.py
 ```
 
-## Status proyek
+Windows PowerShell:
 
-Dokumentasi dan integrasi dasar sedang dikembangkan. Nama perintah Hermes dapat berubah antarversi; selalu periksa `hermes --help` dan dokumentasi resmi.
+```powershell
+$env:ROUTER9_BASE_URL="http://localhost:20128/v1"
+$env:ROUTER9_API_KEY="your-local-9router-key"
+$env:ROUTER9_MODEL="auto"
+$env:TELEGRAM_BOT_TOKEN="123456:..."
+python bot.py
+```
+
+## Keamanan
+
+Jangan commit API key, token Telegram, password, atau `.env`. Jika credential bocor, cabut melalui 9Router/provider atau BotFather dan buat credential baru.
 
 ## Pengembangan
 
 - [Rencana proyek](PROJECT_PLAN.md)
 - [To-do list](TODO.md)
-- [Kontribusi](CONTRIBUTING.md)
-
-## Keamanan
-
-Jangan commit `API key`, token Telegram, password, atau `.env`. Jika token bocor, cabut melalui OpenRouter/BotFather dan buat token baru.
 
 ## Lisensi
 
-Lisensi proyek belum ditentukan. Tambahkan lisensi setelah disepakati kelompok.
+Lisensi proyek belum ditentukan.

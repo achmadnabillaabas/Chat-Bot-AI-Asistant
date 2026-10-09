@@ -3,23 +3,26 @@
 ## Software
 
 - Windows 10/11, macOS, Linux, atau WSL2.
+- Node.js dan npm untuk memasang 9Router.
 - Python 3.11 atau lebih baru.
 - `pip`, `git`, dan `curl`.
-- Hermes Agent versi terbaru.
+- Akun/provider AI yang dikonfigurasi di 9Router.
 
 ## Akun dan kredensial
 
-- Akun OpenRouter dan API key.
+- Provider AI atau subscription yang didukung 9Router.
 - Akun Telegram.
 - Token bot Telegram dari BotFather.
 
 ## Pemeriksaan
 
 ```bash
+node --version
+npm --version
 python --version
 pip --version
 git --version
 curl --version
 ```
 
-Versi yang gagal dikenali harus diperbaiki sebelum masuk ke konfigurasi Hermes. API key dan token bukan requirement yang ditulis di file repository; keduanya dimasukkan melalui konfigurasi lokal yang aman.
+9Router berjalan lokal pada endpoint default `http://localhost:20128/v1`. API key dan token dimasukkan melalui konfigurasi lokal, bukan disimpan di repository.
