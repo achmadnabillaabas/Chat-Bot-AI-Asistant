@@ -1,0 +1,29 @@
+# AI Assistant Dashboard — PRD Summary
+
+## 1. Overview
+Web-based AI Assistant dashboard with ChatGPT-like UX, integrated with:
+- Multi-model routing (via 9Router: Claude 3.5 Sonnet, GPT-4o, DeepSeek, etc.)
+- Custom RAG Knowledge Bases (Vector retrieval with Qdrant, multi-stage processing pipeline)
+- Granular Token Usage Tracking & Analytics (Prompt, completion, cost estimation, per-model breakdown)
+- Model Management & 9Router configuration
+- Telegram Bot integration
+- 10 Nielsen Heuristics compliance, anti-AI slop (no excessive neon, glow, or unnecessary decorative glassmorphism; clean, professional utility software aesthetic)
+
+## 2. Key Screens to Design
+1. **AI Chat (Primary Core Interface)**:
+   - ChatGPT-style conversation view with expandable/collapsible sidebar via top-left hamburger menu.
+   - Clean top app bar with Model Selector (e.g. Claude 3.5 Sonnet), Knowledge Base attachment picker (e.g. Academic, Company SOP, or None), and token usage HUD toggle.
+   - Conversation stream with user prompts, AI responses (markdown, code snippets with copy button), RAG citation chips, per-turn token badge (e.g., "120 in / 75 out • 195 tokens"), retry/stop/edit actions, and bottom prompt bar with shortcuts hints.
+2. **Custom RAG & Knowledge Base Management**:
+   - Knowledge base collection explorer (Academic, Company SOP, Product Manuals).
+   - Document upload zone with file validation (PDF, DOCX, TXT, MD, CSV, max 25MB).
+   - Real-time pipeline status indicators (Uploading → Extracting → Chunking → Embedding → Indexing → Ready).
+   - Document table with chunk count, file size, status badge, re-index button, and delete confirm modal.
+3. **Token Usage & Cost Analytics**:
+   - KPI metric cards: Total Requests, Input Tokens, Output Tokens, Total Tokens, Estimated Cost.
+   - Interactive date range filters (Today, 7D, 30D, Custom) and dimension breakdowns (Usage by Model, Input vs Output, Daily Trend, RAG vs Non-RAG).
+   - Detailed request logs table with conversation ID, model, prompt/completion token count, latency, and RAG status.
+4. **Model Management & Settings (AI Gateway / 9Router & Telegram)**:
+   - Available models directory (Claude Sonnet, GPT-4o, Llama 3, DeepSeek V3) with toggle active/inactive, latency, and default picker.
+   - 9Router API gateway status and embedding model selection.
+   - Telegram Bot status card (Connected/Webhook active, bot handle, test message button).
