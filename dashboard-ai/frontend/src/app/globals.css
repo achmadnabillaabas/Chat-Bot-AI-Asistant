@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-inter: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+  }
+
+  html {
+    @apply bg-surface text-on-surface;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    @apply font-body-md text-body-md;
+    overscroll-behavior: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  /* Custom scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-surface-container-lowest;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-outline rounded-lg;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-outline-variant;
+  }
+
+  /* Thin scrollbar for sidebar */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply bg-outline/30 rounded-full;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    @apply bg-outline/50;
+  }
+
+  /* Ensure main and section elements don't have unwanted defaults */
+  main> :first-child {
+    margin-top: 0 !important;
+  }
+
+  main> :last-child {
+    margin-bottom: 0 !important;
+  }
+}
+
+@layer components {
+
+  /* Button variants */
+  .btn-primary {
+    @apply px-4 py-2 rounded-lg bg-primary text-on-primary font-headline-sm text-headline-sm;
+    @apply hover:bg-primary-container transition-colors;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-surface;
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 rounded-lg border border-outline text-on-surface-variant bg-transparent;
+    @apply hover:bg-surface-container-high hover:text-on-surface transition-colors;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-surface;
+  }
+
+  .btn-destructive {
+    @apply px-4 py-2 rounded-lg border border-danger/40 text-danger bg-transparent;
+    @apply hover:bg-danger hover:text-white transition-colors;
+    @apply focus:outline-none focus:ring-2 focus:ring-danger focus:ring-offset-2 focus:ring-offset-surface;
+  }
+
+  .btn-ghost {
+    @apply px-3 py-1.5 rounded-lg text-on-surface-variant bg-transparent;
+    @apply hover:bg-surface-container-high hover:text-on-surface transition-colors;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-surface;
+  }
+
+  /* Input fields */
+  .input-field {
+    @apply w-full px-3 py-2 rounded-lg bg-surface-container-low border border-outline;
+    @apply text-on-surface placeholder:text-outline;
+    @apply focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary;
+    @apply transition-colors;
+  }
+
+  /* Card */
+  .card {
+    @apply rounded-lg bg-surface-container border border-border-subtle p-4;
+  }
+
+  /* Status badges */
+  .badge-ready {
+    @apply px-2 py-0.5 rounded bg-success/10 border border-success text-success;
+    @apply font-label-sm text-label-sm uppercase;
+  }
+
+  .badge-processing {
+    @apply px-2 py-0.5 rounded bg-warning/10 border border-warning text-warning;
+    @apply font-label-sm text-label-sm uppercase;
+  }
+
+  .badge-failed {
+    @apply px-2 py-0.5 rounded bg-danger/10 border border-danger text-danger;
+    @apply font-label-sm text-label-sm uppercase;
+  }
+}
+
+@layer utilities {
+
+  /* Text utilities */
+  .text-muted {
+    @apply text-outline;
+  }
+
+  /* Focus utilities */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-surface;
+  }
+}
