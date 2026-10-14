@@ -94,4 +94,22 @@ Jangan commit API key, token Telegram, password, atau `.env`. Jika credential bo
 Lisensi proyek belum ditentukan.
 
 
-AI Assistant Dashboard
+## AI Assistant Dashboard
+Arsitektur sistem
+<img width="523" height="477" alt="image" src="https://github.com/user-attachments/assets/4cb3b136-001f-4dcb-b1b6-d8c90cebda2a" />
+Docker: menjalankan layanan pendukung seperti PostgreSQL dan Qdrant.
+RAG: mengambil potongan dokumen yang relevan sebelum konteks dikirim ke AI.
+Telegram Bot: menjadi jalur interaksi alternatif selain dashboard web.
+
+## Cara kerja sistem
+1. Pengguna memasukkan prompt. Misalnya meminta AI menulis artikel mengenai dampak kesehatan pola makan berbasis tumbuhan.
+
+2. Frontend mengirim prompt ke backend. Prompt beserta konfigurasi yang diperlukan diproses melalui API.
+
+3. Backend meneruskan permintaan ke 9Router. Sistem menggunakan AI Combo yang dipilih dan tidak harus menggunakan model individual secara langsung.
+
+4. AI menghasilkan jawaban. Respons dikembalikan ke pengguna melalui dashboard.
+
+5. Sistem menyimpan data dan penggunaan token. Catatan penggunaan mencakup input token dan output token, sesuai data yang tersedia dari respons AI.
+
+6. Pengguna dapat memeriksa hasilnya. Riwayat percakapan dan halaman Token Usage membantu melihat interaksi serta konsumsi token.
