@@ -92,3 +92,6 @@ Jangan commit API key, token Telegram, password, atau `.env`. Jika credential bo
 ## Lisensi
 
 Lisensi proyek belum ditentukan.
+
+
+AI Assistant Dashboard
