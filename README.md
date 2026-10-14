@@ -97,6 +97,7 @@ Lisensi proyek belum ditentukan.
 ## AI Assistant Dashboard
 Arsitektur sistem
 <img width="523" height="477" alt="image" src="https://github.com/user-attachments/assets/4cb3b136-001f-4dcb-b1b6-d8c90cebda2a" />
+
 Docker: menjalankan layanan pendukung seperti PostgreSQL dan Qdrant.
 RAG: mengambil potongan dokumen yang relevan sebelum konteks dikirim ke AI.
 Telegram Bot: menjadi jalur interaksi alternatif selain dashboard web.
