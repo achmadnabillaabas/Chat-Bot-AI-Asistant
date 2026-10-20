@@ -100,8 +100,13 @@ Lisensi proyek belum ditentukan.
 ---
 
 
-## AI Assistant Dashboard
-Arsitektur sistem
+# AI Assistant Dashboard
+
+**Personal AI Assistant with 9Router Integration, Conversation Management, Token Analytics, Knowledge Base, and RAG**
+
+AI Assistant Dashboard adalah aplikasi asisten AI berbasis web yang mengintegrasikan antarmuka percakapan, model AI melalui 9Router, penyimpanan riwayat percakapan, analitik penggunaan token, serta sistem Knowledge Base untuk mendukung pencarian informasi dari dokumen milik pengguna.
+
+Proyek ini dikembangkan menggunakan arsitektur frontend dan backend terpisah, dengan PostgreSQL sebagai database utama, Qdrant sebagai vector database untuk kebutuhan Retrieval-Augmented Generation (RAG), dan Docker untuk menjalankan layanan pendukung.
 <img width="523" height="477" alt="image" src="https://github.com/user-attachments/assets/4cb3b136-001f-4dcb-b1b6-d8c90cebda2a" />
 
 Docker: menjalankan layanan pendukung seperti PostgreSQL dan Qdrant.
@@ -120,14 +125,6 @@ Telegram Bot: menjadi jalur interaksi alternatif selain dashboard web.
 5. Sistem menyimpan data dan penggunaan token. Catatan penggunaan mencakup input token dan output token, sesuai data yang tersedia dari respons AI.
 
 6. Pengguna dapat memeriksa hasilnya. Riwayat percakapan dan halaman Token Usage membantu melihat interaksi serta konsumsi token.
-
-# AI Assistant Dashboard
-
-**Personal AI Assistant with 9Router Integration, Conversation Management, Token Analytics, Knowledge Base, and RAG**
-
-AI Assistant Dashboard adalah aplikasi asisten AI berbasis web yang mengintegrasikan antarmuka percakapan, model AI melalui 9Router, penyimpanan riwayat percakapan, analitik penggunaan token, serta sistem Knowledge Base untuk mendukung pencarian informasi dari dokumen milik pengguna.
-
-Proyek ini dikembangkan menggunakan arsitektur frontend dan backend terpisah, dengan PostgreSQL sebagai database utama, Qdrant sebagai vector database untuk kebutuhan Retrieval-Augmented Generation (RAG), dan Docker untuk menjalankan layanan pendukung.
 
 ## Daftar Isi
 
