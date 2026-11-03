@@ -22,10 +22,8 @@ Pengguna Telegram
 Telegram Bot API
       ↓
 bot.py
-      ↓
-9Router lokal (localhost:20128/v1)
-      ↓
-Provider/model AI yang dipilih di 9Router
+      ├─ (opsional) RAGFlow Knowledge Base
+      └─ 9Router lokal (localhost:20128/v1)
 ```
 
 Hermes Agent bukan dependency wajib untuk `bot.py`. Pilih salah satu jalur agar token Telegram tidak dipakai dua proses.
@@ -56,7 +54,8 @@ Buka dashboard 9Router di `http://localhost:20128/dashboard`, konfigurasi provid
 4. [Konfigurasi Hermes opsional](docs/HERMES_SETUP.md)
 5. [Telegram Bot](docs/TELEGRAM_SETUP.md)
 6. [Menjalankan chatbot](docs/USAGE.md)
-7. [Troubleshooting](docs/TROUBLESHOOTING.md)
+7. [RAGFlow untuk chatbot Telegram](docs/RAGFLOW_SETUP.md) (opsional)
+8. [Troubleshooting](docs/TROUBLESHOOTING.md)
 
 ## Jalankan chatbot
 

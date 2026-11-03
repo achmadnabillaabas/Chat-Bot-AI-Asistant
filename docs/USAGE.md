@@ -1,5 +1,7 @@
 # Menjalankan chatbot
 
+Untuk menyiapkan Knowledge Base RAGFlow secara opsional, ikuti [RAGFlow setup](RAGFLOW_SETUP.md). Tanpa konfigurasi RAGFlow, chatbot tetap menggunakan 9Router.
+
 ## 1. Jalankan 9Router
 
 ```bash
