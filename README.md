@@ -368,38 +368,115 @@ pgAdmin disediakan sebagai antarmuka administrasi PostgreSQL. Database dapat dia
 
 **Penting:** kredensial database sebaiknya disimpan melalui environment variable dan tidak ditulis langsung ke repository publik.
 
-## Knowledge Base dan RAG
+## Retrieval-Augmented Generation (RAG)
 
-Retrieval-Augmented Generation (RAG) memungkinkan model AI menggunakan informasi dari dokumen yang disimpan pada Knowledge Base.
+Fitur RAG memungkinkan AI Assistant menjawab pertanyaan berdasarkan dokumen yang diunggah pengguna ke dalam Knowledge Base. Sistem menggabungkan pencarian informasi berbasis vektor dengan kemampuan LLM untuk menghasilkan jawaban berdasarkan konteks dokumen yang ditemukan.
 
-RAG memadukan pencarian informasi dengan generasi jawaban sehingga respons dapat didasarkan pada konteks dokumen yang relevan.
+### 1. Document Ingestion (Pemrosesan Dokumen)
 
-### Alur pemrosesan dokumen
+Proses mengubah dokumen menjadi informasi yang dapat disimpan dan dicari oleh sistem RAG.
 
-1. Pengguna membuat atau memilih Knowledge Base.
-2. Dokumen diunggah ke aplikasi.
-3. Backend memproses dokumen menjadi potongan teks.
-4. Model embedding mengubah potongan teks menjadi vektor berdimensi 384.
-5. Vektor dan informasi yang diperlukan untuk pencarian disimpan di Qdrant.
-6. Saat pengguna mengajukan pertanyaan dengan RAG aktif, sistem mencari potongan dokumen yang relevan.
-7. Potongan yang ditemukan digunakan sebagai konteks bagi model AI.
+```mermaid
+flowchart TD
+    A([Upload Dokumen]) --> B[FastAPI<br/>Mengelola Upload Dokumen]
+    B --> C[Document Processor<br/>Ekstraksi Teks dan OCR]
+    C --> D[Text Cleaning<br/>Membersihkan Teks]
+    D --> E[Chunking<br/>Memecah Teks menjadi Potongan<br/>600 Token, Overlap 75]
+    E --> F[Sentence Transformers<br/>Mengubah Teks menjadi Vektor<br/>384 Dimensi]
 
-### Komponen RAG
+    F --> G[Qdrant<br/>Menyimpan Vektor dan<br/>Mencari Kemiripan]
+    F --> H[PostgreSQL<br/>Menyimpan Metadata Dokumen<br/>dan Informasi Chunk]
 
-- **Knowledge Base:** mengelompokkan dokumen.
-- **Document Processing:** mengekstrak dan membagi isi dokumen.
-- **Sentence Transformers:** membuat embedding secara lokal.
-- **Qdrant:** menyimpan vektor dan mendukung pencarian semantik.
-- **9Router:** meneruskan permintaan generasi jawaban ke model AI yang dikonfigurasi.
+    G --> I([Dokumen Siap Digunakan])
+    H --> I
 
-Model embedding lokal yang digunakan adalah `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`, dengan dimensi embedding 384.
+    style A fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
+    style I fill:#dcfce7,stroke:#16a34a,color:#166534
+```
 
-### Mode RAG
+**Fungsi setiap komponen:**
 
-- **RAG OFF:** pertanyaan diproses tanpa mengambil konteks dari Knowledge Base.
-- **RAG ON:** sistem mencari konteks relevan dari Knowledge Base yang dipilih.
+| Komponen | Fungsi |
+|---|---|
+| FastAPI | Menerima dan mengelola upload dokumen. |
+| Document Processor | Mengekstrak teks dari dokumen dan melakukan OCR jika tersedia. |
+| Text Cleaning | Membersihkan teks dari karakter atau informasi yang tidak diperlukan. |
+| Chunking | Membagi teks menjadi potongan kecil agar mudah dicari. |
+| Sentence Transformers | Mengubah teks menjadi representasi vektor (*embedding*). |
+| Qdrant | Menyimpan vektor dan melakukan pencarian berdasarkan kemiripan. |
+| PostgreSQL | Menyimpan metadata dokumen, Knowledge Base, dan informasi chunk. |
 
-Kualitas jawaban RAG dipengaruhi oleh isi dokumen, proses pemotongan teks, embedding, parameter pencarian, dan kemampuan model dalam menggunakan konteks.
+### 2. Retrieval & Generation (Pencarian dan Pembuatan Jawaban)
+
+Proses pencarian informasi relevan dari Knowledge Base dan penggunaannya sebagai konteks untuk menghasilkan jawaban.
+
+```mermaid
+flowchart TD
+    A([Pengguna Mengirim Pertanyaan]) --> B[FastAPI<br/>Memproses Permintaan]
+    B --> C{RAG Aktif?}
+
+    C -- Tidak --> D[Riwayat Percakapan dan Pertanyaan]
+    C -- Ya --> E[Sentence Transformers<br/>Mengubah Pertanyaan menjadi Vektor]
+    E --> F[Qdrant<br/>Mencari Vektor Paling Relevan]
+    F --> G[Retrieval<br/>Filter Knowledge Base dan<br/>Ambil 5 Chunk Teratas]
+    G --> H[Context Builder<br/>Menyusun Konteks Dokumen]
+    
+    H --> I[9Router<br/>Menghubungkan Permintaan ke LLM]
+    D --> I
+
+    I --> J[LLM<br/>Menghasilkan Jawaban]
+    J --> K[PostgreSQL<br/>Menyimpan Percakapan dan Token]
+    K --> L([Jawaban Ditampilkan<br/>Beserta Sumber Dokumen jika Tersedia])
+
+    style A fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
+    style L fill:#dcfce7,stroke:#16a34a,color:#166534
+```
+
+**Fungsi setiap komponen:**
+
+| Komponen | Fungsi |
+|---|---|
+| FastAPI | Mengelola pertanyaan dan alur proses RAG. |
+| Sentence Transformers | Mengubah pertanyaan menjadi vektor pencarian. |
+| Qdrant | Mencari potongan dokumen yang paling relevan. |
+| Retrieval | Memilih hasil pencarian berdasarkan Knowledge Base dan skor kemiripan. |
+| Context Builder | Menyusun hasil pencarian menjadi konteks untuk LLM. |
+| 9Router | Meneruskan permintaan ke model LLM yang digunakan. |
+| LLM | Menghasilkan jawaban berdasarkan pertanyaan dan konteks yang diberikan. |
+| PostgreSQL | Menyimpan riwayat percakapan dan penggunaan token. |
+
+### 3. Teknologi dan Konfigurasi RAG
+
+| Komponen | Teknologi / Konfigurasi |
+|---|---|
+| Backend | FastAPI |
+| Embedding Model | `paraphrase-multilingual-MiniLM-L12-v2` |
+| Embedding Dimension | 384 |
+| Vector Database | Qdrant |
+| Relational Database | PostgreSQL |
+| LLM Gateway | 9Router |
+| Chunk Size | 600 Token |
+| Chunk Overlap | 75 Token |
+| Top-K Retrieval | 5 |
+| Similarity Threshold | 0.3 |
+| Distance Metric | Cosine Similarity |
+
+### 4. Dukungan Dokumen
+
+Format dokumen yang didukung:
+
+- **Dokumen:** PDF, DOCX, TXT, Markdown, dan CSV.
+- **Gambar:** PNG, JPG, JPEG, dan WebP melalui Image-Aware RAG.
+- **OCR:** Menggunakan Tesseract untuk mengenali teks pada gambar apabila tersedia dan dikonfigurasi.
+
+*Catatan: Pemahaman seluruh gambar yang tertanam dalam PDF, grafik, dan diagram masih memiliki keterbatasan.*
+
+### 5. Mode RAG
+
+- **RAG Aktif:** Sistem mencari informasi relevan dari Knowledge Base yang dipilih dan menggunakannya sebagai konteks untuk LLM.
+- **RAG Nonaktif:** Sistem menghasilkan jawaban menggunakan pertanyaan dan riwayat percakapan tanpa melakukan pencarian dokumen melalui Qdrant.
+
+Dengan arsitektur ini, AI Assistant dapat memanfaatkan dokumen internal sebagai sumber informasi tambahan untuk menghasilkan jawaban yang lebih relevan dan kontekstual.
 
 ## Integrasi Telegram Bot
 
