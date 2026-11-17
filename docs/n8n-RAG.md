@@ -27,6 +27,28 @@ System message pada ekspor meminta agent menjawab berdasarkan data di vector sto
 
 Ekspor workflow hanya mencantumkan nama credential seperti `Supabase account 2`, `Google Gemini(PaLM) Api account`, `Telegram account`, `Cohere account`, dan `Postgres account`. Credential tersebut tidak ikut dipindahkan sebagai rahasia dan harus dibuat ulang/ditautkan pada instance tujuan. Cocokkan nama model dan dukungan node dengan versi n8n yang dipakai; ekspor mencantumkan `models/gemini-3.5-flash`, yang mungkin perlu disesuaikan dengan model yang tersedia saat deployment.
 
+## Dokumentasi visual
+
+Screenshot berikut berasal dari percobaan n8n dan Telegram. Bilah alamat serta identitas workspace/chat yang tidak diperlukan telah dipotong atau ditutup. Screenshot Supabase tidak disertakan karena menampilkan project ID dan isi dokumen tersimpan.
+
+### Workflow RAG di n8n
+
+![Canvas workflow n8n: ingestion dokumen dan tanya-jawab Telegram](images/n8n-rag/workflow-overview.jpg)
+
+*Jalur ingestion menggunakan form, Data Loader, Gemini Embeddings, dan Supabase Vector Store. Jalur tanya-jawab menggunakan Telegram Trigger, AI Agent, Gemini, Postgres Chat Memory, Supabase Vector Store, dan Cohere reranker.*
+
+### Detail eksekusi workflow
+
+![Detail node dan koneksi workflow n8n RAG](images/n8n-rag/workflow-detail.jpg)
+
+*Cuplikan canvas dari percobaan yang memperlihatkan koneksi antar-node. Status dan jumlah item hanya mencerminkan tampilan saat screenshot diambil, bukan jaminan hasil pada setiap eksekusi.*
+
+### Contoh jawaban melalui Telegram
+
+![Contoh percakapan Telegram dengan chatbot RAG](images/n8n-rag/telegram-rag-example.jpg)
+
+*Contoh respons bot terhadap pertanyaan tentang eksperimen Random Forest/WESAD. Gambar ini menunjukkan contoh percakapan, bukan hasil evaluasi akurasi RAG yang terukur.*
+
 ## Alur data
 
 ```mermaid
