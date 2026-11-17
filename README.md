@@ -55,7 +55,8 @@ Buka dashboard 9Router di `http://localhost:20128/dashboard`, konfigurasi provid
 5. [Telegram Bot](docs/TELEGRAM_SETUP.md)
 6. [Menjalankan chatbot](docs/USAGE.md)
 7. [RAGFlow untuk chatbot Telegram](docs/RAGFLOW_SETUP.md) (opsional)
-8. [Troubleshooting](docs/TROUBLESHOOTING.md)
+8. [Eksperimen n8n RAG untuk chatbot](docs/n8n-RAG.md) (rekomendasi/eksperimen terpisah; belum terintegrasi di `bot.py`)
+9. [Troubleshooting](docs/TROUBLESHOOTING.md)
 
 ## Jalankan chatbot
 
