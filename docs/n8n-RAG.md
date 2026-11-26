@@ -8,8 +8,10 @@ Ekspor workflow asli disimpan di luar repository pada `C:\Users\Bang_megg\Docume
 
 Workflow bernama `RAG` terdiri dari dua jalur:
 
-1. **Ingestion dokumen:** form n8n menerima berkas PDF, `Default Data Loader` menyiapkan konten dokumen, lalu `Embeddings Google Gemini` menghasilkan embedding. `Supabase Vector Store` menyimpan dokumen pada tabel `documents`.
-2. **Tanya-jawab Telegram:** `Telegram Trigger` menerima pesan, kemudian `AI Agent` menggunakan `Google Gemini Chat Model`, `Supabase Vector Store DB` sebagai tool retrieval, `Reranker Cohere`, dan `Postgres Chat Memory`. Node Telegram mengirim keluaran agent kembali ke chat yang mengirim pesan.
+1. **Ingestion dokumen:** form n8n menerima berkas PDF, `Default Data Loader` menyiapkan konten dokumen, lalu node `Embeddings OpenAI` menghasilkan embedding. `Supabase Vector Store` menyimpan dokumen pada tabel `documents`.
+2. **Tanya-jawab Telegram:** `Telegram Trigger` menerima pesan, kemudian `AI Agent` menggunakan `Google Gemini Chat Model` untuk jawaban, `Supabase Vector Store DB` sebagai tool retrieval, `Reranker Cohere`, dan `Postgres Chat Memory`. Node Telegram mengirim keluaran agent kembali ke chat yang mengirim pesan.
+
+Pada screenshot revisi, node embedding terlihat sebagai **Embeddings OpenAI v7**, Supabase Vector Store/Vector Store DB sebagai **v7**, Cohere Reranker sebagai **v7**, Google Gemini Chat Model sebagai **v8**, dan Postgres Chat Memory sebagai **v8**. Nama model embedding OpenAI yang dipilih (misalnya model tertentu) tidak terlihat, jadi dokumentasi ini tidak menetapkan nama atau dimensinya.
 
 System message pada ekspor meminta agent menjawab berdasarkan data di vector store, dan menyatakan tidak tahu bila jawabannya tidak ditemukan. Tetap uji perilaku ini dengan pertanyaan yang jawabannya ada dan tidak ada di sumber.
 
@@ -19,7 +21,8 @@ System message pada ekspor meminta agent menjawab berdasarkan data di vector sto
 |---|---|---|
 | n8n | Menjalankan workflow, form upload, dan Telegram trigger | Instance n8n yang dapat dijangkau; webhook publik/HTTPS diperlukan untuk trigger Telegram pada deployment yang sesuai |
 | Supabase | Menyimpan isi dokumen, metadata, dan embedding | Project, tabel `documents`, skema/vector extension yang sesuai dengan node Supabase Vector Store |
-| Google Gemini | Model chat dan embedding | Credential/API access yang disetel di n8n; dimensi embedding harus konsisten dengan kolom vector Supabase |
+| OpenAI | Model embedding dokumen dan kueri | Credential OpenAI di n8n; pilih model dan pastikan dimensi embedding konsisten dengan kolom vector Supabase |
+| Google Gemini | Model chat untuk AI Agent | Credential/API access Google Gemini yang disetel di n8n |
 | Telegram Bot API | Menerima pertanyaan dan mengirim balasan | Credential bot Telegram yang valid di n8n; pastikan tidak ada proses polling lain yang mengambil update bot yang sama |
 | Cohere | Reranking hasil retrieval | Credential Cohere aktif; node dapat dihapus jika reranking tidak dipakai |
 | PostgreSQL | Memori percakapan agent | Database dan tabel yang sesuai; credential PostgreSQL di n8n |
@@ -29,13 +32,13 @@ Ekspor workflow hanya mencantumkan nama credential seperti `Supabase account 2`,
 
 ## Dokumentasi visual
 
-Screenshot berikut berasal dari percobaan n8n dan Telegram. Bilah alamat serta identitas workspace/chat yang tidak diperlukan telah dipotong atau ditutup. Screenshot Supabase tidak disertakan karena menampilkan project ID dan isi dokumen tersimpan.
+Screenshot berikut berasal dari percobaan n8n dan Telegram. Bilah alamat serta identitas workspace/chat yang tidak diperlukan telah dipotong atau ditutup. Screenshot Supabase tidak disertakan karena menampilkan project ID dan isi dokumen tersimpan. Screenshot workflow terbaru menunjukkan **Embeddings OpenAI**; ekspor JSON `RAG-sapi.json` yang tersedia di folder sumber merupakan versi lebih lama dan masih menunjukkan Gemini untuk embedding.
 
 ### Workflow RAG di n8n
 
-![Canvas workflow n8n: ingestion dokumen dan tanya-jawab Telegram](images/n8n-rag/workflow-overview.jpg)
+![Canvas workflow n8n: ingestion dokumen dengan OpenAI Embeddings dan tanya-jawab Telegram](images/n8n-rag/workflow-overview.jpg)
 
-*Jalur ingestion menggunakan form, Data Loader, Gemini Embeddings, dan Supabase Vector Store. Jalur tanya-jawab menggunakan Telegram Trigger, AI Agent, Gemini, Postgres Chat Memory, Supabase Vector Store, dan Cohere reranker.*
+*Screenshot revisi menunjukkan jalur ingestion memakai form, Data Loader, OpenAI Embeddings, dan Supabase Vector Store. Jalur tanya-jawab memakai Telegram Trigger, AI Agent dengan Google Gemini Chat Model, Postgres Chat Memory, Supabase Vector Store DB, dan Cohere reranker.*
 
 ### Detail eksekusi workflow
 
@@ -55,7 +58,7 @@ Screenshot berikut berasal dari percobaan n8n dan Telegram. Bilah alamat serta i
 flowchart LR
     PDF["PDF via n8n Form"] --> Loader["Default Data Loader"]
     Loader --> VS["Supabase Vector Store<br/>table: documents"]
-    Embed["Google Gemini Embeddings"] --> VS
+    Embed["OpenAI Embeddings"] --> VS
 
     TG["Telegram message"] --> Agent["n8n AI Agent"]
     Model["Google Gemini Chat Model"] --> Agent
@@ -70,13 +73,15 @@ flowchart LR
 
 Screenshot percobaan memperlihatkan tabel Supabase `public.documents` dengan kolom `id`, `content`, `metadata`, dan `embedding`. Metadata mencakup lokasi potongan dokumen, sedangkan `embedding` berisi vektor numerik. Screenshot juga memperlihatkan tabel `public.n8n_chat_histories`; skema detail dan keterkaitannya tidak terverifikasi dari screenshot.
 
-Screenshot workflow menunjukkan ingestion dokumen terpisah dari jalur tanya-jawab Telegram. Node retrieval dikonfigurasi dalam ekspor dengan `topK: 20` dan `useReranker: true`. Nilai ini adalah konfigurasi eksperimen, bukan klaim bahwa 20 hasil selalu optimal. Ukur relevansi dan latensi pada data sendiri sebelum mengubahnya.
+Screenshot workflow terbaru menunjukkan ingestion dokumen terpisah dari jalur tanya-jawab Telegram dengan OpenAI Embeddings. Node retrieval pada ekspor lama dikonfigurasi dengan `topK: 20` dan `useReranker: true`; karena ekspor tersebut mendahului revisi embedding, cocokkan kembali nilai dan konfigurasi aktual di n8n. Nilai `topK` bukan klaim bahwa 20 hasil selalu optimal. Ukur relevansi dan latensi pada data sendiri.
+
+Bila model embedding berubah, pastikan dimensi embedding tetap cocok dengan skema Supabase. Jika model atau dimensinya berbeda, buat/konfigurasikan ulang kolom atau tabel vektor yang sesuai dan re-embed dokumen yang sudah ada sebelum query dengan embedding baru; jangan mencampur vektor dari model berbeda dalam ruang vektor yang sama.
 
 ## Menjalankan dan menguji eksperimen
 
 1. Siapkan instance n8n dan koneksi HTTPS/webhook yang dibutuhkan Telegram Trigger.
 2. Siapkan Supabase dan tabel/indeks vector yang kompatibel dengan jenis serta dimensi embedding yang dipilih.
-3. Buat credential Gemini, Supabase, Telegram, Cohere (jika dipakai), dan PostgreSQL melalui pengelolaan credential bawaan n8n. Jangan menaruh secret di file workflow, README, atau Git.
+3. Buat credential OpenAI untuk embedding, Google Gemini untuk chat model, Supabase, Telegram, Cohere (jika dipakai), dan PostgreSQL melalui pengelolaan credential bawaan n8n. Jangan menaruh secret di file workflow, README, atau Git.
 4. Import `RAG-sapi.json` melalui antarmuka n8n. Ekspor yang diperiksa berstatus tidak aktif; tinjau node, credential, nama tabel, model, prompt, dan koneksi sebelum mengaktifkan workflow.
 5. Jalankan jalur form dengan PDF uji yang tidak sensitif. Pastikan konten, metadata, dan embedding tersimpan di tabel yang benar.
 6. Uji Telegram dengan pertanyaan yang jawabannya tercantum dalam dokumen, pertanyaan yang tidak tercantum, dan percakapan berbeda. Pastikan jawaban berpijak pada sumber dan tidak mengarang saat retrieval kosong.
